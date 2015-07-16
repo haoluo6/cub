@@ -178,7 +178,7 @@ struct WarpReduceShfl
         float               input,              ///< [in] Calling thread's input
         int                 folded_items_per_warp)        ///< [in] Total number of valid items folded into each logical warp
     {
-        T output = input;
+        float output = input;
 
         // Iterate reduction steps
         #pragma unroll

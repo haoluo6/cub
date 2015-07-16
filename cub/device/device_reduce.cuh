@@ -472,9 +472,13 @@ struct DeviceReduce
                 int device_ordinal;
                 if (CubDebug(error = cudaGetDevice(&device_ordinal))) break;
 
+            	cudaDeviceProp deviceProp;
+            	cudaGetDeviceProperties(&deviceProp, device_ordinal);
+
                 // Get SM count
                 int sm_count;
-                if (CubDebug(error = cudaDeviceGetAttribute (&sm_count, cudaDevAttrMultiProcessorCount, device_ordinal))) break;
+                //if (CubDebug(error = cudaDeviceGetAttribute (&sm_count, cudaDevAttrMultiProcessorCount, device_ordinal))) break;
+				sm_count = deviceProp.multiProcessorCount;
 
                 // Get a rough estimate of privatized_kernel SM occupancy based upon the maximum SM occupancy of the targeted PTX architecture
                 int privatized_sm_occupancy = CUB_MIN(

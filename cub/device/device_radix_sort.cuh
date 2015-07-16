@@ -525,9 +525,14 @@ struct DeviceRadixSort
             int device_ordinal;
             if (CubDebug(error = cudaGetDevice(&device_ordinal))) break;
 
+            cudaDeviceProp deviceProp;
+            cudaGetDeviceProperties(&deviceProp, device_ordinal);
+
             // Get SM count
             int sm_count;
-            if (CubDebug(error = cudaDeviceGetAttribute (&sm_count, cudaDevAttrMultiProcessorCount, device_ordinal))) break;
+            //if (CubDebug(error = cudaDeviceGetAttribute (&sm_count, cudaDevAttrMultiProcessorCount, device_ordinal))) break;
+			sm_count = deviceProp.multiProcessorCount;
+
 
             // Get a rough estimate of downsweep_kernel SM occupancy based upon the maximum SM occupancy of the targeted PTX architecture
             int downsweep_sm_occupancy = CUB_MIN(
@@ -590,9 +595,9 @@ struct DeviceRadixSort
 
 #ifndef __CUDA_ARCH__
             // Get current smem bank configuration
-            cudaSharedMemConfig original_smem_config;
-            if (CubDebug(error = cudaDeviceGetSharedMemConfig(&original_smem_config))) break;
-            cudaSharedMemConfig current_smem_config = original_smem_config;
+            //cudaSharedMemConfig original_smem_config;
+            //if (CubDebug(error = cudaDeviceGetSharedMemConfig(&original_smem_config))) break;
+            //cudaSharedMemConfig current_smem_config = original_smem_config;
 #endif
             // Iterate over digit places
             int current_bit = begin_bit;
@@ -607,11 +612,11 @@ struct DeviceRadixSort
 
 #ifndef __CUDA_ARCH__
                 // Update smem config if necessary
-                if (current_smem_config != upsweep_dispatch_params.smem_config)
-                {
-                    if (CubDebug(error = cudaDeviceSetSharedMemConfig(upsweep_dispatch_params.smem_config))) break;
-                    current_smem_config = upsweep_dispatch_params.smem_config;
-                }
+                //if (current_smem_config != upsweep_dispatch_params.smem_config)
+                //{
+                //    if (CubDebug(error = cudaDeviceSetSharedMemConfig(upsweep_dispatch_params.smem_config))) break;
+                //    current_smem_config = upsweep_dispatch_params.smem_config;
+                //}
 #endif
 
                 // Log upsweep_kernel configuration
@@ -646,11 +651,11 @@ struct DeviceRadixSort
 
 #ifndef __CUDA_ARCH__
                 // Update smem config if necessary
-                if (current_smem_config != downsweep_dispatch_params.smem_config)
-                {
-                    if (CubDebug(error = cudaDeviceSetSharedMemConfig(downsweep_dispatch_params.smem_config))) break;
-                    current_smem_config = downsweep_dispatch_params.smem_config;
-                }
+                //if (current_smem_config != downsweep_dispatch_params.smem_config)
+                //{
+                //    if (CubDebug(error = cudaDeviceSetSharedMemConfig(downsweep_dispatch_params.smem_config))) break;
+                //    current_smem_config = downsweep_dispatch_params.smem_config;
+                //}
 #endif
 
                 // Log downsweep_kernel configuration
@@ -684,10 +689,10 @@ struct DeviceRadixSort
 
 #ifndef __CUDA_ARCH__
             // Reset smem config if necessary
-            if (current_smem_config != original_smem_config)
-            {
-                if (CubDebug(error = cudaDeviceSetSharedMemConfig(original_smem_config))) break;
-            }
+            //if (current_smem_config != original_smem_config)
+            //{
+            //    if (CubDebug(error = cudaDeviceSetSharedMemConfig(original_smem_config))) break;
+            //}
 #endif
 
         }

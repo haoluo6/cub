@@ -40,6 +40,11 @@
 #include "../block/block_scan.cuh"
 #include "../util_namespace.cuh"
 
+enum cudaSharedMemConfig {
+    cudaSharedMemBankSizeDefault = 0,
+    cudaSharedMemBankSizeFourByte = 1,
+    cudaSharedMemBankSizeEightByte = 2
+};
 
 /// Optional outer namespace(s)
 CUB_NS_PREFIX

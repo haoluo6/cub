@@ -233,10 +233,15 @@ public:
         cudaError_t error = cudaSuccess;
         do
         {
+            cudaDeviceProp deviceProp;
+            cudaGetDeviceProperties(&deviceProp, 0);
+
             // Fill in SM version
             int major, minor;
-            if (CubDebug(error = cudaDeviceGetAttribute(&major, cudaDevAttrComputeCapabilityMajor, device_ordinal))) break;
-            if (CubDebug(error = cudaDeviceGetAttribute(&minor, cudaDevAttrComputeCapabilityMinor, device_ordinal))) break;
+            //if (CubDebug(error = cudaDeviceGetAttribute(&major, cudaDevAttrComputeCapabilityMajor, device_ordinal))) break;
+            //if (CubDebug(error = cudaDeviceGetAttribute(&minor, cudaDevAttrComputeCapabilityMinor, device_ordinal))) break;
+			major = (int)deviceProp.major;
+			minor = (int)deviceProp.minor;
             sm_version = major * 100 + minor * 10;
 
             // Fill in static SM properties
@@ -244,7 +249,8 @@ public:
             ArchProps<100>::Callback(*this, sm_version);
 
             // Fill in SM count
-            if (CubDebug(error = cudaDeviceGetAttribute (&sm_count, cudaDevAttrMultiProcessorCount, device_ordinal))) break;
+            //if (CubDebug(error = cudaDeviceGetAttribute (&sm_count, cudaDevAttrMultiProcessorCount, device_ordinal))) break;
+			sm_count = deviceProp.multiProcessorCount;
 
             // Fill in PTX version
         #if CUB_PTX_ARCH > 0
