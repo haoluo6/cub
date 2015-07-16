@@ -234,7 +234,7 @@ public:
         do
         {
             cudaDeviceProp deviceProp;
-            cudaGetDeviceProperties(&deviceProp, 0);
+            if (CubDebug(error = cudaGetDeviceProperties(&deviceProp, 0))) break;
 
             // Fill in SM version
             int major, minor;
